@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 6
+names: ['Missing_Hole', 'MouseBite', 'Open_Circuit', 'Short_Circuit', 'Spur', 'Spurious_Cooper']
+
+roboflow:
+  workspace: cnn-pcb-defect-detection
+  project: pcb-defect-detection-ultra
+  version: 6
+  license: Public Domain
+  url: https://universe.roboflow.com/cnn-pcb-defect-detection/pcb-defect-detection-ultra/dataset/6
