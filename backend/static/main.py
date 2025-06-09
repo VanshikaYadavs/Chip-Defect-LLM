@@ -6,9 +6,11 @@ import os
 import shutil
 import uuid
 
+# Add current directory to import path
 sys.path.append(os.path.dirname(__file__))
+
 from detect import detect_chip_defects
-from llm_report import generate_llm_report
+from llm_report import generate_llm_report, generate_defect_chart
 
 app = FastAPI()
 
@@ -19,19 +21,21 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Ensure the upload directory exists
+
+# Uploads directory for images and charts
 UPLOAD_DIR = "backend/static"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-UPLOAD_DIR = "backend/static"
 
 @app.get("/")
 def root():
     return {"message": "Welcome to the Chip Defect Detection API! Visit /health for status."}
 
+
 @app.get("/health")
 def health():
     return {"status": "Chip Defect Detection API is running!"}
+
 
 @app.post("/detect")
 async def detect_image(file: UploadFile = File(...)):
@@ -47,8 +51,16 @@ async def detect_image(file: UploadFile = File(...)):
     # Run LLM to get explanation
     llm_response = generate_llm_report(detection_result["defect_classes"])
 
+    # Generate defect frequency chart
+    chart_path = generate_defect_chart(detection_result["defect_classes"])
+    chart_path = chart_path.replace("\\", "/")  # For web compatibility
+
+    # Prepare output image path
+    result_image_path = detection_result["output_image_path"].replace("\\", "/")
+
     return JSONResponse({
-        "result_image": detection_result["output_image_path"],
+        "result_image": result_image_path,
         "defects": detection_result["defect_classes"],
-        "llm_report": llm_response
+        "llm_report": llm_response,
+        "chart_image": chart_path
     })
