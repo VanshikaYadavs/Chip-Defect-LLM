@@ -27,3 +27,8 @@ chip-defect-llm/
 │
 ├── README.md
 └── .gitignore
+
+
+frontend run: npm install, npm start
+backedn run: pip install -r requirements.txt , uvicorn backend.static.main:app --host 127.0.0.1 --port 8000
+Llama run: ollama run llama3
